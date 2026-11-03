@@ -55,6 +55,28 @@ async function route(req,res,next){
    res.setHeader('set-cookie','__Host-lsadmin='+encodeURIComponent(jwt)+'; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age='+lifetime);return json(res,200,{ok:true});
   }
   if(p==='/_ls/logout'&&req.method==='POST'){if(req.headers.origin!==origin)return json(res,403,{error:'Forbidden'});res.setHeader('set-cookie','__Host-lsadmin=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0');return json(res,200,{ok:true})}
+  if(p==='/_ls/m30/upload'&&req.method==='GET'){
+   if(!await verify(cookie(req)))return login(res);
+   const uploadScript=fs.readFileSync(path.join(root,'assets','m30-upload.js'),'utf8');
+   const body='<h1>LS Engineering · Caricamento M30.18</h1><p>Area riservata al titolare. Le tre parti sono caricate direttamente nel bucket privato Supabase e controllate con SHA-256 sia in locale sia sul server.</p><div class="box"><h2>Distribuzione Windows M30.18</h2><p>Seleziona insieme i tre file <code>.part01</code>, <code>.part02</code>, <code>.part03</code> dalla chiavetta o dal computer. La dimensione complessiva è circa 70,7 MiB.</p><input type="file" id="m30files" multiple accept=".part01,.part02,.part03"><p><button id="m30send" type="button">Carica e verifica i tre file</button></p><p id="m30log" role="status"></p><h3>Stato dei file</h3><p id="m30state">Caricamento stato…</p></div><p><a href="/_ls/admin">Torna al pannello vendite</a> · <a href="/software/reverse-3d.html">Scheda commerciale M30.18</a></p>';
+   return page(res,body,uploadScript);
+  }
+  if(p==='/_ls/m30/api'&&req.method==='POST'){
+   if(req.headers.origin!==origin||!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,403,{error:'Origine non autorizzata'});
+   const jwt=cookie(req);
+   if(!await verify(jwt))return json(res,401,{error:'Autenticazione Google richiesta'});
+   let body='',n=0;for await(const part of req){n+=part.length;if(n>1500)return json(res,413,{error:'Richiesta troppo grande'});body+=part}
+   let args;try{args=JSON.parse(body)}catch{return json(res,400,{error:'Dati non validi'})}
+   if(!['mint','verify','status'].includes(args?.action))return json(res,400,{error:'Operazione non autorizzata'});
+   if(args.action!=='status'&&!['part01','part02','part03'].includes(args?.part))return json(res,400,{error:'Parte non riconosciuta'});
+   const remote=await fetch('https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/reverse-m30-upload',{
+    method:'POST',headers:{'content-type':'application/json','origin':origin},
+    body:JSON.stringify({id_token:jwt,action:args.action,part:args.part}),
+    signal:AbortSignal.timeout(55000)
+   });
+   let result;try{result=await remote.json()}catch{return json(res,502,{error:'Verifica remota non disponibile'})}
+   return json(res,remote.status,result);
+  }
   if(p==='/_ls/stats'&&req.method==='GET'){if(!await verify(cookie(req)))return json(res,401,{error:'Unauthorized'});try{return json(res,200,await analyticsV2.stats(u.searchParams.get('period')||'d30'))}catch{return json(res,502,{error:'Stripe unavailable: verify read-only permissions'})}}
   return json(res,404,{error:'Not found'});
  }catch{return json(res,503,{error:'Temporary auth error'})}
