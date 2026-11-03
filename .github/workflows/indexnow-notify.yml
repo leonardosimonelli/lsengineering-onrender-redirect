@@ -1,0 +1,23 @@
+name: Notify IndexNow about updated public pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**/*.html'
+      - 'site/sitemap.xml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Notify IndexNow (Bing and participating search engines)
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: python3 .github/scripts/indexnow_notify.py
