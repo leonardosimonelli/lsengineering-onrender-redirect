@@ -120,7 +120,9 @@ async function serve(req, res) {
     send(res,400,'Bad request',req.method);return;
   }
   if(pathname==='/shop/m30/health') {
-    respondJson(res,200,{ok:true,host:'render-direct',proxy:'m30-ready'});
+    console.log('M30 health probe');
+    res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
+    res.end('<!doctype html><html lang="it"><title>LS M30 Health</title><body><main><h1>LS Engineering M30 proxy attivo</h1></main></body></html>');
     return;
   }
   if (pathname.startsWith('/shop/m30/')||pathname.startsWith('/api/m30/')) {
