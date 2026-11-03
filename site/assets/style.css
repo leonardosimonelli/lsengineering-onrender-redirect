@@ -124,30 +124,7 @@ a{color:inherit}
   box-shadow:0 10px 30px rgba(0,0,0,.22);
 }
 .product-card:hover{border-color:#4c9eaa;transform:translateY(-3px)}
-.card-visual{
-  position:relative;
-  height:166px;
-  min-height:166px;
-  background:linear-gradient(135deg,#0b253c,#15455d);
-  border-bottom:1px solid #28526d;
-}
-.card-visual svg{max-height:145px}
-.preview-chip{
-  position:absolute;
-  z-index:3;
-  top:10px;
-  left:11px;
-  background:rgba(5,22,35,.84);
-  color:#c0e9ea;
-  border:1px solid #3d7884;
-  padding:4px 7px;
-  font-size:9px;
-  line-height:1.2;
-  border-radius:7px;
-  font-weight:700;
-  letter-spacing:.2px;
-}
-[dir=rtl] .preview-chip{left:auto;right:11px}
+/* Original four illustrations, dimensions and colors inherited from historical site CSS. */
 .card-body{
   display:flex;
   flex-direction:column;
@@ -187,5 +164,5 @@ a{color:inherit}
 .card-action.unavailable{background:#26394d;color:#a6b9c8;border-color:#37516a;cursor:not-allowed}
 a.card-action:focus-visible{outline:3px solid #e8bd73;outline-offset:3px}
 @media (max-width:1090px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.product-card{min-height:425px}.card-body{padding:20px 22px}.card-body h3{font-size:20px}.card-body>p{font-size:14px}}
-@media (max-width:670px){.product-grid{grid-template-columns:minmax(0,1fr)}.card-visual{height:185px;min-height:185px}.product-card{min-height:420px}.card-body{padding:22px}.card-body h3{font-size:22px}.card-action{font-size:14px}}
+@media (max-width:670px){.product-grid{grid-template-columns:minmax(0,1fr)}.product-card{min-height:420px}.card-body{padding:22px}.card-body h3{font-size:22px}.card-action{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.card-action,.product-card{transition:none}}
