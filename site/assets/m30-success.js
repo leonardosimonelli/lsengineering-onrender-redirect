@@ -1,6 +1,6 @@
 'use strict';
 (function(){
-  const API='/api/m30/delivery';
+  const API='/shop/m30/delivery';
   const id=new URLSearchParams(location.search).get('session_id')||'';
   history.replaceState(null,'',location.pathname);
   const note=document.getElementById('m30-note'),links=document.getElementById('m30-parts'),button=document.getElementById('m30-zip'),hash=document.getElementById('m30-hash');
