@@ -154,6 +154,25 @@ async function serve(req, res) {
   }
 
   const ext=path.extname(target).toLowerCase();
+  // Render is the public canonical host. Rewrite canonical, hreflang and sitemap
+  // URLs in HTML/XML; the legacy Cloudflare-hosted copy remains untouched.
+  if(ext==='.html'||ext==='.xml') {
+    const original=await fs.promises.readFile(target,'utf8');
+    const normalized=original.replaceAll(
+      'https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev',
+      'https://lsengineering.onrender.com'
+    );
+    const data=Buffer.from(normalized,'utf8');
+    res.writeHead(200,{
+      'content-type':MIME[ext],
+      'content-length':data.length,
+      'cache-control':'public, max-age=60',
+      'x-content-type-options':'nosniff',
+      'referrer-policy':'strict-origin-when-cross-origin'
+    });
+    res.end(method==='HEAD'?undefined:data);
+    return;
+  }
   res.writeHead(200, {
     'content-type': MIME[ext] || 'application/octet-stream',
     'content-length': stat.size,
