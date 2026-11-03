@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: lsengineering
+    runtime: static
+    buildCommand: mkdir -p public && cp index.html robots.txt public/
+    staticPublishPath: ./public
+    routes:
+      - type: redirect
+        source: /*
+        destination: https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/
