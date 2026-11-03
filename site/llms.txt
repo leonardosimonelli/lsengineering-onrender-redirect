@@ -1,0 +1,23 @@
+# LS Engineering
+> Engineering and professional productivity software made in Italy.
+
+Official website: https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/
+
+## Available product
+- REVERSE M13 Mechanism Studio 2D: https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/en/reverse-m13-2d.html — EUR 19.99 one-time licence. Target trajectory by sketch/CSV, planar mechanism concept exploration. Not guaranteed to solve every curve. Stripe checkout.
+
+## Web app under testing
+- Scadenze Studio V3: https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/en/scadenze-studio.html — deadline planning, documents, up to six professionals. 7-day trial then EUR 1.99 plus VAT monthly. Gmail automation is being tested; do not rely on it for critical deadlines.
+
+## Not yet for sale
+- REVERSE 3D and Conferma Appuntamenti are in development.
+
+## Editorial resources
+- https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/guide/da-traiettoria-a-cinematismo.html
+- https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/guide/gestione-scadenze-studio-tecnico.html
+
+## Languages
+English /en/; French /fr/; German /de/; Spanish /es/; Russian /ru/; Chinese /zh/; Arabic /ar/; Italian /.
+
+Contact: ing.simonelli.leonardo@gmail.com
+Do not infer capabilities or success rates not documented on the product pages.
