@@ -90,7 +90,7 @@ const assetVisual = i=> {
 };
 const earlyLabels={"it":"Edizione anticipata","en":"Early release","fr":"Version anticipée","de":"Vorabversion","es":"Edición anticipada","ru":"Ранняя версия","zh":"抢先版","ar":"إصدار مبكر"};
 const earlyNotes={"it":"La versione Windows non è ancora collaudata; leggi le limitazioni prima di acquistare.","en":"Windows functionality has not been tested; read the limitations before buying.","fr":"Version Windows non testée : consultez les limites avant l’achat.","de":"Windows-Funktionen noch nicht getestet; Hinweise vor dem Kauf lesen.","es":"Versión Windows aún no probada; consulta las limitaciones antes de comprar.","ru":"Версия Windows не прошла функциональные испытания. Изучите ограничения перед покупкой.","zh":"Windows 功能尚未测试，请在购买前阅读使用限制。","ar":"لم يتم اختبار البرنامج على ويندوز؛ راجع القيود قبل الشراء."};
-const displayStage=(i,lang,t)=>i===2?(earlyLabels[lang]||earlyLabels.it):displayStage(i,lang,t);
+const displayStage=(i,lang,t)=>i===2?(earlyLabels[lang]||earlyLabels.it):(stage[i]==='live'?t.statusLive:stage[i]==='development'?t.statusDevelopment:t.statusPreparing);
 function render(lang){
   const t=C[lang]||C.it, config=window.LS_LINKS||{};
   document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
