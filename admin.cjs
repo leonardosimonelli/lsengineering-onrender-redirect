@@ -82,7 +82,11 @@ async function storefrontM30(req,res,routePath){
 async function route(req,res,next){
  let u;try{u=new URL(req.url,'http://localhost')}catch{return json(res,400,{error:'Invalid URL'})}const p=u.pathname;
  if(!p.startsWith('/_ls/')){
-  if((req.method==='GET'||req.method==='HEAD')&&['/','/en/','/de/','/fr/','/es/','/ru/','/zh/','/ar/'].includes(p)){
+  const retained=['/acquisto-m30.html','/acquisto-riuscito.html','/recupera-m13.html',
+    '/collaudo-m13.html','/google36ee101a69805f3d.html',
+    '/bd790f24cc0d2f645d15f1ee2cd019ff.txt','/robots.txt'];
+  if(p.startsWith('/shop/m30/')||p.startsWith('/api/m30/')||retained.includes(p))return next(req,res);
+  if(req.method==='GET'||req.method==='HEAD'){
    res.writeHead(301,{'location':'https://lsengineering-web.onrender.com'+p+u.search,'cache-control':'public,max-age=900'});
    return res.end();
   }
