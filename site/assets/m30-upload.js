@@ -38,7 +38,7 @@
     if(digest!==P[part].sha)throw Error('SHA-256 non corrispondente per '+part+'. Nessun upload eseguito per questa parte.');
     tell('Invio '+part+' ('+(file.size/1048576).toFixed(1)+' MiB) allo storage privato…');
     const signed=await api('mint',part);
-    if(!/^https:\/\/ijdjyketecwwplvqcqpd\.supabase\.co\/storage\/v1\/object\/upload\/sign\//.test(signed.signedUrl))throw Error('URL di caricamento inatteso');
+    if(!/^https:\/\/ijdjyketecwwplvqcqpd(?:\.storage)?\.supabase\.co\/storage\/v1\/object\/upload\/sign\//.test(signed.signedUrl))throw Error('URL di caricamento inatteso');
     const upload=await fetch(signed.signedUrl,{method:'PUT',headers:{'content-type':'application/octet-stream','x-upsert':'true'},body:file});
     if(!upload.ok)throw Error('Storage ha rifiutato '+part+' (HTTP '+upload.status+'). Riprova.');
     tell('Controllo SHA-256 su Supabase: '+part+'…');
