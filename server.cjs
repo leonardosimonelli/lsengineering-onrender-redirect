@@ -46,7 +46,10 @@ const M30_UPSTREAM='https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/';
 const M30_ENDPOINTS={
   '/api/m30/status': {method:'GET',slug:'reverse-m30-checkout'},
   '/api/m30/checkout': {method:'POST',slug:'reverse-m30-checkout'},
-  '/api/m30/delivery': {method:'POST',slug:'reverse-m30-delivery'}
+  '/api/m30/delivery': {method:'POST',slug:'reverse-m30-delivery'},
+  '/shop/m30/status': {method:'GET',slug:'reverse-m30-checkout'},
+  '/shop/m30/checkout': {method:'POST',slug:'reverse-m30-checkout'},
+  '/shop/m30/delivery': {method:'POST',slug:'reverse-m30-delivery'}
 };
 function respondJson(res, status, value) {
   res.writeHead(status, {
@@ -115,6 +118,13 @@ async function serve(req, res) {
     if(!pathname.startsWith('/')||pathname.includes(String.fromCharCode(92))||pathname.includes(String.fromCharCode(0))) throw new Error('Invalid path');
   } catch {
     send(res,400,'Bad request',req.method);return;
+  }
+  if(pathname==='/shop/m30/health') {
+    respondJson(res,200,{ok:true,host:'render-direct',proxy:'m30-ready'});
+    return;
+  }
+  if (pathname.startsWith('/shop/m30/')||pathname.startsWith('/api/m30/')) {
+    console.log('M30 storefront route',req.method,pathname);
   }
   if (await proxyM30(req,res,pathname)) return;
   const method=req.method;
