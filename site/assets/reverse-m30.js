@@ -1,7 +1,7 @@
 'use strict';
 (function(){
-  const API_STATUS='/shop/m30/status';
-  const API_CHECKOUT='/shop/m30/checkout';
+  const API_STATUS='/_ls/m30/public/status';
+  const API_CHECKOUT='/_ls/m30/public/checkout';
   const btn=document.getElementById('m30-buy');
   const status=document.getElementById('m30-status');
   const agree=document.getElementById('m30-consent');
