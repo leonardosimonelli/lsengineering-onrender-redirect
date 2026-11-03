@@ -83,7 +83,7 @@ async function route(req,res,next){
  let u;try{u=new URL(req.url,'http://localhost')}catch{return json(res,400,{error:'Invalid URL'})}const p=u.pathname;
  if(!p.startsWith('/_ls/')){
   if(req.method!=='GET'||!(p==='/'||/^\/(en|de|fr|es|ru|ar|zh)\/$/.test(p)))return next(req,res);
-  const file=path.join(root,p,'index.html');return fs.readFile(file,'utf8',(e,s)=>{if(e)return next(req,res);const lock='<a href="/_ls/admin" title="Area riservata" aria-label="Pannello vendite" style="position:fixed;right:10px;bottom:10px;z-index:9999;opacity:.6;border-radius:50%;padding:4px 7px;background:#0d2844;color:white;border:1px solid #31718b;text-decoration:none;font-size:12px">&#128274;</a>';res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=120','x-robots-tag':'noindex,follow'});res.end(s.replace(/<\/body>/i,lock+'</body>'))});
+  const file=path.join(root,p,'index.html');return fs.readFile(file,'utf8',(e,s)=>{if(e)return next(req,res);const lock='<a href="/_ls/admin" title="Area riservata" aria-label="Pannello vendite" style="position:fixed;right:10px;bottom:10px;z-index:9999;opacity:.6;border-radius:50%;padding:4px 7px;background:#0d2844;color:white;border:1px solid #31718b;text-decoration:none;font-size:12px">&#128274;</a>';res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=120','x-robots-tag':'index,follow'});res.end(s.replaceAll('https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev','https://lsengineering.onrender.com').replace(/<\/body>/i,lock+'</body>'))});
  }
  try{
   if(p==='/_ls/m30/public/health'&&req.method==='GET'){
