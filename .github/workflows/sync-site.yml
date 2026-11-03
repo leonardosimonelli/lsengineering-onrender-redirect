@@ -12,10 +12,16 @@ jobs:
         run: |
           set -eu
           mkdir -p site
-          while IFS= read -r file; do
+          cat site-paths.txt | while IFS= read -r file; do
             [ -z "$file" ] && continue
+            echo "FETCH $file"
             mkdir -p "site/$(dirname "$file")"
-            curl --fail --location --silent --show-error --retry 3 --max-time 30 "https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/$file" --output "site/$file"
+            if curl --fail --location --silent --show-error --retry 3 --max-time 40 "https://dawn-mouse-7a3c.ing-simonelli-leonardo.workers.dev/$file" --output "site/$file"; then
+              echo "OK $file"
+            else
+              echo "FAILED $file"
+              exit 1
+            fi
           done
           test -s site/index.html
           test "$(find site -type f | wc -l)" -ge 45
