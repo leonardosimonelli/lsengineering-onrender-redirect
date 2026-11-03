@@ -38,6 +38,47 @@ async function stats(){
  try{const s=await fetch('https://api.stripe.com/v1/subscriptions?status=active&limit=100',{headers,signal:AbortSignal.timeout(10000)});if(s.ok){const v=await s.json();subs=v.has_more?'100+':v.data.length}}catch{}
  return {connected:true,test:stripeKey.includes('_test_'),partial:d.has_more,count:good.length,gross:good.reduce((n,x)=>n+(x.amount_captured||x.amount||0),0),refunds:good.reduce((n,x)=>n+(x.amount_refunded||0),0),subs,latest:good.slice(0,20).map(x=>({date:new Date(x.created*1000).toLocaleDateString('it-IT'),description:x.description||x.metadata?.product_name||'Pagamento Stripe',amount:x.amount_captured||x.amount||0,refund:x.amount_refunded||0}))};
 }
+
+const storefrontRoutes={
+  '/_ls/m30/public/status':['GET','reverse-m30-checkout'],
+  '/_ls/m30/public/checkout':['POST','reverse-m30-checkout'],
+  '/_ls/m30/public/delivery':['POST','reverse-m30-delivery']
+};
+async function storefrontM30(req,res,routePath){
+ const details=storefrontRoutes[routePath];
+ if(!details)return json(res,404,{error:'Percorso sconosciuto'});
+ if(req.method!==details[0])return json(res,405,{error:'Metodo non ammesso'});
+ let body;
+ if(req.method==='POST'){
+   if(req.headers.origin && req.headers.origin!==origin)return json(res,403,{error:'Origine non autorizzata'});
+   if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,415,{error:'Richiesto JSON'});
+   let size=0;const chunks=[];
+   for await(const part of req){
+     size+=part.length;
+     if(size>1024)return json(res,413,{error:'Richiesta troppo grande'});
+     chunks.push(part);
+   }
+   body=Buffer.concat(chunks).toString('utf8');
+ }
+ try{
+   const remote=await fetch('https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/'+details[1],{
+     method:req.method,
+     headers:{origin,'content-type':'application/json','accept':'application/json'},
+     ...(body===undefined?{}:{body}),
+     signal:AbortSignal.timeout(25000)
+   });
+   const raw=await remote.text();
+   if(raw.length>100000)return json(res,502,{error:'Risposta troppo grande'});
+   let parsed;
+   try{parsed=JSON.parse(raw)}catch{return json(res,502,{error:'Risposta non JSON dal sistema di pagamento'})}
+   console.log('M30 storefront response',routePath,remote.status);
+   return json(res,remote.status,parsed);
+ }catch(e){
+   console.log('M30 storefront upstream unavailable',routePath,e instanceof Error?e.name:'error');
+   return json(res,502,{error:'Servizio di pagamento non raggiungibile'});
+ }
+}
+
 async function route(req,res,next){
  let u;try{u=new URL(req.url,'http://localhost')}catch{return json(res,400,{error:'Invalid URL'})}const p=u.pathname;
  if(!p.startsWith('/_ls/')){
@@ -45,6 +86,12 @@ async function route(req,res,next){
   const file=path.join(root,p,'index.html');return fs.readFile(file,'utf8',(e,s)=>{if(e)return next(req,res);const lock='<a href="/_ls/admin" title="Area riservata" aria-label="Pannello vendite" style="position:fixed;right:10px;bottom:10px;z-index:9999;opacity:.6;border-radius:50%;padding:4px 7px;background:#0d2844;color:white;border:1px solid #31718b;text-decoration:none;font-size:12px">&#128274;</a>';res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=120','x-robots-tag':'noindex,follow'});res.end(s.replace(/<\/body>/i,lock+'</body>'))});
  }
  try{
+  if(p==='/_ls/m30/public/health'&&req.method==='GET'){
+    console.log('M30 public health check');
+    res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
+    return res.end('<!doctype html><html lang="it"><title>LS M30</title><body><h1>LS Engineering M30 public handler attivo</h1></body></html>');
+  }
+  if(p.startsWith('/_ls/m30/public/'))return storefrontM30(req,res,p);
   if(p==='/_ls/admin'&&req.method==='GET')return await verify(cookie(req))?analyticsV2.dashboard(res,page):login(res);
   if(p==='/_ls/login'&&req.method==='POST'){
    if(req.headers.origin!==origin||!req.headers['content-type']?.startsWith('application/json'))return json(res,403,{error:'Forbidden'});
