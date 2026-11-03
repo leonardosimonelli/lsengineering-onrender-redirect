@@ -4,7 +4,7 @@ window.LS_LINKS = Object.freeze({
   scadenze: 'https://scadenze-studio-v3.netlify.app/?login=1',
   // Inserire qui solo URL reali e pubblicati delle app o pagine di acquisto verificate.
   reverse2d: 'https://buy.stripe.com/8x2aEZalk9gseVMeYvbMQ00',
-  reverse3d: '',
+  reverse3d: 'https://lsengineering.onrender.com/software/reverse-3d.html',
   appuntamenti: '',
   contactEmail: 'ing.simonelli.leonardo@gmail.com'
 });
