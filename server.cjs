@@ -134,6 +134,19 @@ async function serve(req, res) {
     res.writeHead(405,{'allow':'GET, HEAD','cache-control':'no-store'});
     res.end();return;
   }
+  // Send legacy public pages and assets to the non-sleeping static storefront.
+  // Preserve historical checkout success, recovery, Google verification and admin backends.
+  const legacySuccess=new Set([
+    '/acquisto-m30.html','/acquisto-riuscito.html','/recupera-m13.html',
+    '/collaudo-m13.html','/google36ee101a69805f3d.html',
+    '/bd790f24cc0d2f645d15f1ee2cd019ff.txt','/robots.txt'
+  ]);
+  if(!pathname.startsWith('/_ls/') && !legacySuccess.has(pathname)){
+    const location='https://lsengineering-web.onrender.com'+pathname+
+      new URL(req.url,'http://localhost').search;
+    res.writeHead(301,{'location':location,'cache-control':'public,max-age=900'});
+    res.end();return;
+  }
   let requestPath = pathname.endsWith('/') ? pathname + 'index.html' : pathname;
   let target = path.resolve(root, '.' + requestPath);
   if (!target.startsWith(root + path.sep)) {
