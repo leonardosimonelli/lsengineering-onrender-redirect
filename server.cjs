@@ -40,22 +40,88 @@ function send(res, status, msg, method) {
   res.end(body);
 }
 
-async function serve(req, res) {
-  const method = req.method;
-  if (method !== 'GET' && method !== 'HEAD') {
-    res.writeHead(405, {'allow':'GET, HEAD','cache-control':'no-store'});
-    res.end(); return;
-  }
 
+const SITE_ORIGIN='https://lsengineering.onrender.com';
+const M30_UPSTREAM='https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/';
+const M30_ENDPOINTS={
+  '/api/m30/status': {method:'GET',slug:'reverse-m30-checkout'},
+  '/api/m30/checkout': {method:'POST',slug:'reverse-m30-checkout'},
+  '/api/m30/delivery': {method:'POST',slug:'reverse-m30-delivery'}
+};
+function respondJson(res, status, value) {
+  res.writeHead(status, {
+    'content-type':'application/json; charset=utf-8',
+    'cache-control':'no-store',
+    'x-content-type-options':'nosniff',
+    'referrer-policy':'no-referrer'
+  });
+  res.end(JSON.stringify(value));
+}
+async function proxyM30(req,res,pathname) {
+  const endpoint=M30_ENDPOINTS[pathname];
+  if (!endpoint) return false;
+  if (req.method!==endpoint.method) {
+    res.writeHead(405,{'allow':endpoint.method,'cache-control':'no-store'}).end();
+    return true;
+  }
+  let body;
+  if (req.method==='POST') {
+    if (req.headers.origin && req.headers.origin!==SITE_ORIGIN) {
+      respondJson(res,403,{error:'Origine non autorizzata'});return true;
+    }
+    if (!(req.headers['content-type']||'').startsWith('application/json')) {
+      respondJson(res,415,{error:'È richiesto JSON'});return true;
+    }
+    const chunks=[];
+    let size=0;
+    for await (const chunk of req) {
+      size+=chunk.length;
+      if (size>1024) {
+        respondJson(res,413,{error:'Richiesta troppo grande'});return true;
+      }
+      chunks.push(chunk);
+    }
+    body=Buffer.concat(chunks).toString('utf8');
+  }
+  try {
+    const upstream=await fetch(M30_UPSTREAM+endpoint.slug,{
+      method:req.method,
+      headers:{'origin':SITE_ORIGIN,'content-type':'application/json','accept':'application/json'},
+      ...(body===undefined?{}:{body}),
+      signal:AbortSignal.timeout(25000)
+    });
+    const content=await upstream.text();
+    if (content.length>100000 || !(upstream.headers.get('content-type')||'').includes('application/json')) {
+      respondJson(res,502,{error:'Risposta server non valida'});return true;
+    }
+    res.writeHead(upstream.status,{
+      'content-type':'application/json; charset=utf-8',
+      'cache-control':'no-store',
+      'x-content-type-options':'nosniff',
+      'referrer-policy':'no-referrer'
+    });
+    res.end(content);
+  } catch {
+    respondJson(res,502,{error:'Servizio di pagamento temporaneamente non raggiungibile'});
+  }
+  return true;
+}
+
+
+async function serve(req, res) {
   let pathname;
   try {
-    pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-    if (!pathname.startsWith('/') || pathname.includes('\\') || pathname.includes('\0'))
-      throw new Error('Invalid path');
+    pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+    if(!pathname.startsWith('/')||pathname.includes(String.fromCharCode(92))||pathname.includes(String.fromCharCode(0))) throw new Error('Invalid path');
   } catch {
-    send(res,400,'Bad request',method); return;
+    send(res,400,'Bad request',req.method);return;
   }
-
+  if (await proxyM30(req,res,pathname)) return;
+  const method=req.method;
+  if (method!=='GET'&&method!=='HEAD') {
+    res.writeHead(405,{'allow':'GET, HEAD','cache-control':'no-store'});
+    res.end();return;
+  }
   let requestPath = pathname.endsWith('/') ? pathname + 'index.html' : pathname;
   let target = path.resolve(root, '.' + requestPath);
   if (!target.startsWith(root + path.sep)) {
