@@ -5,4 +5,4 @@ Disallow: /acquisto-m30.html
 Disallow: /acquisto-riuscito.html
 Disallow: /recupera-m13.html
 
-Sitemap: https://lsengineering.onrender.com/sitemap.xml
+Sitemap: https://lsengineering-web.onrender.com/sitemap.xml

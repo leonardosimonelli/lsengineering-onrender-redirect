@@ -1,7 +1,7 @@
 'use strict';
 (function(){
-  const API_STATUS='/_ls/m30/public/status';
-  const API_CHECKOUT='/_ls/m30/public/checkout';
+  const API_STATUS='https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/reverse-m30-checkout';
+  const API_CHECKOUT='https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/reverse-m30-checkout';
   const btn=document.getElementById('m30-buy');
   const status=document.getElementById('m30-status');
   const agree=document.getElementById('m30-consent');
