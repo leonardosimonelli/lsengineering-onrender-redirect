@@ -45,7 +45,7 @@ async function route(req,res,next){
   const file=path.join(root,p,'index.html');return fs.readFile(file,'utf8',(e,s)=>{if(e)return next(req,res);const lock='<a href="/_ls/admin" title="Area riservata" aria-label="Pannello vendite" style="position:fixed;right:10px;bottom:10px;z-index:9999;opacity:.6;border-radius:50%;padding:4px 7px;background:#0d2844;color:white;border:1px solid #31718b;text-decoration:none;font-size:12px">&#128274;</a>';res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=120','x-robots-tag':'noindex,follow'});res.end(s.replace(/<\/body>/i,lock+'</body>'))});
  }
  try{
-  if(p==='/_ls/admin'&&req.method==='GET')return await verify(cookie(req))?dashboard(res):login(res);
+  if(p==='/_ls/admin'&&req.method==='GET')return await verify(cookie(req))?analyticsV2.dashboard(res,page):login(res);
   if(p==='/_ls/login'&&req.method==='POST'){
    if(req.headers.origin!==origin||!req.headers['content-type']?.startsWith('application/json'))return json(res,403,{error:'Forbidden'});
    let b='',size=0;for await(const chunk of req){size+=chunk.length;if(size>7500)return json(res,413,{error:'Too long'});b+=chunk}
@@ -55,8 +55,9 @@ async function route(req,res,next){
    res.setHeader('set-cookie','__Host-lsadmin='+encodeURIComponent(jwt)+'; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age='+lifetime);return json(res,200,{ok:true});
   }
   if(p==='/_ls/logout'&&req.method==='POST'){if(req.headers.origin!==origin)return json(res,403,{error:'Forbidden'});res.setHeader('set-cookie','__Host-lsadmin=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0');return json(res,200,{ok:true})}
-  if(p==='/_ls/stats'&&req.method==='GET'){if(!await verify(cookie(req)))return json(res,401,{error:'Unauthorized'});try{return json(res,200,await stats())}catch{return json(res,502,{error:'Stripe unavailable: verify read-only permissions'})}}
+  if(p==='/_ls/stats'&&req.method==='GET'){if(!await verify(cookie(req)))return json(res,401,{error:'Unauthorized'});try{return json(res,200,await analyticsV2.stats(u.searchParams.get('period')||'d30'))}catch{return json(res,502,{error:'Stripe unavailable: verify read-only permissions'})}}
   return json(res,404,{error:'Not found'});
  }catch{return json(res,503,{error:'Temporary auth error'})}
 }
+const analyticsV2=require('./analytics-v2.cjs');
 const old=http.createServer;http.createServer=function(handler){return old.call(this,(req,res)=>Promise.resolve(route(req,res,handler)).catch(()=>{if(!res.headersSent)json(res,500,{error:'Service error'});else res.destroy()}))};
