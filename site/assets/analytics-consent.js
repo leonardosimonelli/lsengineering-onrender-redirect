@@ -4,7 +4,7 @@
  */
 (function () {
   'use strict';
-  var GA4_ID = ''; // Set to the actual G-... measurement ID after the owner accepts the Google terms.
+  var GA4_ID = 'G-W9T90MTK5L'; // LS Engineering Google Analytics 4 web measurement ID.
   if (!/^G-[A-Z0-9]{5,20}$/.test(GA4_ID)) return;
   var KEY = 'ls_ga4_consent_v1';
   var AGE = 180 * 24 * 60 * 60 * 1000;
