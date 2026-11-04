@@ -26,3 +26,7 @@ Technical concepts and demonstrations are not substitutes for engineering design
 **Contact:** ing.simonelli.leonardo@gmail.com
 
 The commercial software is not distributed by this repository; this repository hosts the public marketing site and related server-side integration code.
+## Community and engineering education
+
+- [LS Engineering on Facebook](https://www.facebook.com/profile.php?id=61596082986483) — practical software updates and engineering articles.
+- [Planar mechanism mobility and the Kutzbach criterion](https://lsengineering-web.onrender.com/guide/gradi-liberta-cinematismi-planari-kutzbach.html) — Italian-language walkthrough of the planar 4R mobility equation and limitations.

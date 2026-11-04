@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081a2f">
+<title>Gradi di libertà dei cinematismi planari: formula di Kutzbach ed esempio 4R | LS Engineering</title>
+<meta name="description" content="Calcola la mobilità di un cinematismo planare con M=3(n−1)−2J1−J2: esempio 4R, differenza fra mobilità e assemblabilità, posizioni singolari.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://lsengineering-web.onrender.com/guide/gradi-liberta-cinematismi-planari-kutzbach.html">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="stylesheet" href="/assets/style.css">
+<meta property="og:type" content="article"><meta property="og:title" content="Gradi di libertà dei cinematismi planari: formula di Kutzbach ed esempio 4R"><meta property="og:description" content="Calcola la mobilità di un cinematismo planare con M=3(n−1)−2J1−J2: esempio 4R, differenza fra mobilità e assemblabilità, posizioni singolari.">
+<meta property="og:url" content="https://lsengineering-web.onrender.com/guide/gradi-liberta-cinematismi-planari-kutzbach.html"><meta property="og:image" content="https://lsengineering-web.onrender.com/assets/ls-engineering-social.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Gradi di libertà dei cinematismi planari: formula di Kutzbach ed esempio 4R","description":"Calcola la mobilità di un cinematismo planare con M=3(n−1)−2J1−J2: esempio 4R, differenza fra mobilità e assemblabilità, posizioni singolari.","url":"https://lsengineering-web.onrender.com/guide/gradi-liberta-cinematismi-planari-kutzbach.html","datePublished":"2026-11-04","dateModified":"2026-11-04","author":{"@type":"Organization","name":"LS Engineering","url":"https://lsengineering-web.onrender.com/"},"publisher":{"@type":"Organization","name":"LS Engineering","url":"https://lsengineering-web.onrender.com/"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://lsengineering-web.onrender.com/guide/gradi-liberta-cinematismi-planari-kutzbach.html"}}</script><script defer src="/assets/analytics-consent.js?v=1"></script>
+</head>
+<body>
+<a class="skip" href="#content">Vai al contenuto</a>
+<header class="topbar"><div class="wrap nav-wrap"><a class="logo" href="/"><span class="logo-mark">LS<span class="logo-dot">.</span></span><span class="logo-label"><strong>ENGINEERING</strong><small>SOFTWARE LAB</small></span></a><nav class="menu"><a href="/#products">Applicazioni</a><a href="/#approach">Il nostro metodo</a><a href="/#contact">Contatti</a></nav></div></header>
+<main class="editorial" id="content"><div class="wrap">
+<div class="breadcrumbs"><a href="/">LS Engineering</a> / <a href="/#products">Risorse e applicazioni</a> / Gradi di libertà</div>
+<section class="editorial-hero"><div class="section-kicker">GUIDA TECNICA GRATUITA · 4 NOVEMBRE 2026</div><h1>Gradi di libertà dei cinematismi planari: formula di Kutzbach ed esempio 4R</h1>
+<p class="lead">Una formula semplice è utile per scegliere l'architettura di un meccanismo. Ma conoscere i gradi di libertà non basta per dire che un cinematismo si possa assemblare o che segua una traiettoria desiderata.</p></section>
+<div class="editorial-grid"><article class="editorial-panel">
+<h2>1. Che cosa significa mobilità di un meccanismo?</h2>
+<p>La <strong>mobilità</strong>, espressa come numero di gradi di libertà (GDL), indica quanti parametri indipendenti servono per descrivere il moto del cinematismo rispetto al suo telaio fisso, quando i vincoli sono regolari e indipendenti. Per un corpo rigido libero nel piano esistono tre possibilità di movimento infinitesimo: traslazione lungo X, traslazione lungo Y e rotazione attorno all'asse perpendicolare al piano.</p>
+<p>Per questo motivo, un insieme di <em>n</em> corpi rigidi planari, comprendendo il telaio, dispone inizialmente di <strong>3(n − 1)</strong> gradi di libertà: il telaio non è mobile. Le coppie cinematiche sottraggono libertà imponendo equazioni di vincolo.</p>
+<h2>2. Formula di Grübler–Kutzbach per cinematismi planari</h2>
+<p>Per una catena planare generica, con vincoli indipendenti, si utilizza:</p>
+<p style="font-size:clamp(19px,3vw,28px);font-weight:800;padding:13px 16px;background:#eaf6f5;border-radius:10px;text-align:center;color:#0d3a47" aria-label="M uguale tre per parentesi n meno uno, meno due J uno, meno J due">M = 3(n − 1) − 2 J₁ − J₂</p>
+<p>Dove <strong>M</strong> è la mobilità; <strong>n</strong> è il numero di corpi, <em>incluso il telaio</em>; <strong>J₁</strong> conta le coppie planari a un grado di libertà relativo, come cerniere rotoidali R e slitte prismatiche P; <strong>J₂</strong> conta le coppie che ammettono due gradi di libertà relativi nel piano, come alcuni contatti superiori idealizzati.</p>
+<p>Ogni cerniera o slitta ideale sopprime due gradi di libertà relativi; una coppia a due gradi di libertà ne sopprime uno. Il criterio è un <strong>conteggio strutturale preliminare</strong>, non una verifica completa della geometria.</p>
+<h2>3. Esempio pratico: quadrilatero articolato 4R</h2>
+<p>Consideriamo un meccanismo a quattro aste rigide con quattro cerniere rotoidali complanari: telaio, manovella, biella e bilanciere. Contiamo <strong>n = 4</strong>, <strong>J₁ = 4</strong> e <strong>J₂ = 0</strong>.</p>
+<p style="font-size:19px;font-weight:700;padding:13px;background:#f3f7f9;border-left:4px solid #159e93">M = 3 × (4 − 1) − 2 × 4 − 0 = 9 − 8 = <strong>1</strong></p>
+<p>Nella configurazione generica il quadrilatero ha dunque <strong>un grado di libertà</strong>. Una manovella può costituire l'ingresso; conoscendo il valore dell'angolo d'ingresso e la geometria compatibile, le altre posizioni sono determinate per ogni ramo d'assemblaggio ammissibile.</p>
+<p>Il risultato <em>non</em> garantisce che una delle aste possa compiere un giro completo. Questo dipende dalla geometria, dalle lunghezze e dalle configurazioni accessibili. Nel caso dei quadrilateri a quattro barre, la condizione di Grashof è un criterio specifico da studiare separatamente, con attenzione alle particolarità dei casi limite.</p>
+<h2>4. Perché M = 1 non significa che la traiettoria sia realizzabile</h2>
+<p>Due cinematismi possono avere la stessa mobilità ma geometrie, curve descritte dal punto tracciante, intervalli di funzionamento e trasmissione del moto completamente differenti. Il conteggio non contiene alcuna informazione sulle lunghezze delle aste, sulle posizioni degli ancoraggi o sulla posizione del punto tracciante.</p>
+<p>Nella <strong>sintesi inversa</strong> si parte invece dalla curva obiettivo e si ricercano configurazioni che ne riproducano, nei limiti possibili, andamento e dimensioni. Un quadrilatero 4R di mobilità unitaria è una possibile famiglia candidata, non una soluzione universale.</p>
+<h2>5. Posizioni singolari, rami d'assemblaggio e limiti del conteggio</h2>
+<p>Quando gli elementi del meccanismo raggiungono particolari allineamenti, le equazioni che legano le velocità possono diventare singolari o mal condizionate. Si possono incontrare <strong>punti morti</strong>, amplificazioni del rapporto di velocità o forti sensibilità agli errori geometrici. Il grado di libertà previsto dal criterio in una configurazione generica non sostituisce l'analisi locale della matrice jacobiana dei vincoli.</p>
+<p>Anche vincoli ridondanti, coincidenze geometriche o architetture speciali possono rendere il semplice conteggio fuorviante. Inoltre, un modello spaziale 3D non può essere validato applicando meccanicamente la stessa formula planare: richiede la corretta rappresentazione dei gradi di libertà e dei giunti nello spazio.</p>
+<h2>6. Verifiche consigliate prima di adottare un cinematismo</h2>
+<ol><li><strong>Individuare il telaio</strong> e contare ogni elemento e giunto effettivo, evitando doppie contabilizzazioni.</li>
+<li><strong>Calcolare la mobilità preliminare</strong> e verificare quanti ingressi indipendenti siano necessari.</li>
+<li><strong>Risolvere le equazioni di chiusura</strong> nelle configurazioni di interesse per controllare l'assemblabilità e individuare i possibili rami.</li>
+<li><strong>Campionare l'intero ciclo</strong>, se previsto, analizzando le variazioni geometriche, i punti morti e le eventuali interferenze.</li>
+<li><strong>Confrontare la curva calcolata con quella desiderata</strong> utilizzando la stessa scala, origine, unità di misura e parametrizzazione, dichiarando la metrica di errore usata.</li>
+<li><strong>Completare la verifica di progetto</strong> considerando tolleranze, azionamenti, forze, rigidezze, resistenza dei componenti, protezioni e sicurezza.</li></ol>
+<h2>7. Dalla teoria all'esplorazione di soluzioni</h2>
+<p>Il conteggio dei gradi di libertà aiuta a scegliere le famiglie cinematiche da analizzare. Nella pratica progettuale è utile collegarlo alle verifiche sulla traiettoria e sui vincoli: consulta la guida gratuita <a href="/guide/da-traiettoria-a-cinematismo.html">Da una traiettoria a un cinematismo</a> e l'approfondimento sui <a href="/guide/cinematismi-2d-3d-differenze-vincoli.html">giunti e vincoli 2D e 3D</a>.</p>
+<p>Il software <a href="/software/reverse-m13-2d.html">REVERSE Mechanism Suite M13 2D</a> nasce per esplorare in modo guidato cinematismi candidati partendo dal moto desiderato. I risultati devono comunque essere valutati e validati dal progettista: non è garantita una soluzione per ogni traiettoria.</p>
+<p class="fineprint"><strong>Riferimento tecnico:</strong> criterio classico di mobilità planare di Kutzbach, illustrato anche in <a href="https://www.roymech.co.uk/Useful_Tables/Mechanics/Linkages.html" target="_blank" rel="noopener noreferrer">RoyMech — Mechanical Linkages</a>. Questa guida è introduttiva e non costituisce una verifica di progettazione.</p>
+</article><aside><section class="editorial-panel"><h2>In sintesi</h2>
+<p><strong>M = 1</strong> significa un solo parametro di movimento indipendente in condizioni generiche.</p>
+<p><strong>M = 0</strong> indica una struttura cinematicamente bloccata nel modello generale, salvo casi speciali.</p>
+<p><strong>M &gt; 1</strong> richiede, in generale, più parametri indipendenti per definire la posizione.</p>
+<h3>Per approfondire</h3><p><a href="/guide/preparare-traiettoria-csv-cinematismi.html">Come preparare una traiettoria CSV</a></p><p><a href="/software/reverse-m13-2d.html">Scheda REVERSE 2D</a></p></section></aside></div>
+<p class="editorial-footer">LS Engineering · <a href="/">Torna al catalogo</a> · <a href="/informazioni.html">Informazioni e privacy</a>.</p>
+</div></main><footer class="footer"><div class="wrap footer-row"><a class="footer-brand" href="/">LS<span>.</span> ENGINEERING</a><p>Progettazione meccanica e strumenti digitali. Italia.</p><div><a href="/informazioni.html">Informazioni</a> · <a href="https://www.facebook.com/profile.php?id=61596082986483" rel="noopener noreferrer" target="_blank">Facebook</a><span>© 2026 LS Engineering</span></div></div></footer>
+</body></html>
