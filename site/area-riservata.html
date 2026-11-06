@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071b30">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Accesso alle statistiche private | LS Engineering</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0%,#19405c,#071b30 70%);color:#f0fbff;font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px}
+main{width:min(100%,590px);padding:clamp(24px,5vw,42px);border:1px solid #315c74;background:#0d2843;border-radius:20px;box-shadow:0 20px 70px #0004}
+.brand{font-size:14px;font-weight:800;letter-spacing:.13em;color:#5be5d1}.brand span{color:#d9f8ff}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.2;letter-spacing:-.02em;margin:22px 0 14px}
+p{color:#c3d9e8;margin:12px 0}
+.status{background:#153a53;border:1px solid #36728a;border-radius:12px;padding:14px 16px;margin:20px 0;color:#e4f9ff}
+.status strong{display:block;font-size:16px}.status small{display:block;margin-top:5px;color:#b3ccd9}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 10px}
+a.btn,button{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:44px;padding:12px 17px;border-radius:10px;border:1px solid #4b938f;font:700 15px system-ui;cursor:pointer;background:#3bcebf;color:#062734;text-decoration:none}
+a.btn.alt,button.alt{background:#173f59;color:#d9f7f3}
+a.btn:hover,button:hover{filter:brightness(1.1)}
+a:focus-visible,button:focus-visible{outline:3px solid #ffca74;outline-offset:3px}
+.muted{font-size:13px;color:#a8c8d8}
+.spinner{display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:baseline;border:2px solid #a8c9de;border-top-color:#5becce;border-radius:50%;animation:spin .85s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="brand">LS<span>.</span> ENGINEERING</div>
+<h1>Accesso alle statistiche private</h1>
+<p>Sto verificando la disponibilità del pannello riservato. L'accesso alle vendite richiede il tuo account Google autorizzato.</p>
+<div class="status" role="status" aria-live="polite"><strong id="status"><span class="spinner" aria-hidden="true"></span> Connessione al pannello…</strong><small id="detail">Il server privato gratuito può richiedere tempo per riattivarsi.</small></div>
+<div class="buttons">
+<a class="btn" href="https://lsengineering.onrender.com/_ls/admin" id="direct">Apri il pannello direttamente</a>
+<button type="button" class="alt" id="retry">Riprova la connessione</button>
+</div>
+<p class="muted">Il sito pubblico rimane sempre disponibile. Qui non vengono mostrati dati economici senza autenticazione.</p>
+<p><a style="color:#6de5dd" href="/">← Torna al sito LS Engineering</a></p>
+</main>
+<script defer src="/assets/private-access.js?v=1"></script>
+</body></html>

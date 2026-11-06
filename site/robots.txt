@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /_ls/
+Disallow: /area-riservata.html
 Disallow: /acquisto-m30.html
 Disallow: /acquisto-riuscito.html
 Disallow: /recupera-m13.html

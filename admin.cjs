@@ -93,6 +93,15 @@ async function route(req,res,next){
   return next(req,res);
  }
  try{
+  // Public readiness probe: no authentication or business data exposed.
+  // Only the official static site may read the response cross-origin.
+  if(p==='/_ls/admin/ready'&&req.method==='GET'){
+   if(req.headers.origin==='https://lsengineering-web.onrender.com'){
+    res.setHeader('access-control-allow-origin','https://lsengineering-web.onrender.com');
+   }
+   res.setHeader('vary','Origin');
+   return json(res,200,{ready:true});
+  }
   if(p==='/_ls/m30/public/health'&&req.method==='GET'){
     console.log('M30 public health check');
     res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});
