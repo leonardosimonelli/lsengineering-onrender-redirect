@@ -165,7 +165,7 @@ function frontend(){
   if(!/^\d{1,7}(?:[.,]\d{1,2})?$/.test(value.trim())){alert('Importo non valido');return}
   const cents=Math.round(Number(value.replace(',','.'))*100);
   if(!Number.isSafeInteger(cents)||cents<1||cents>remaining){alert('Importo superiore al residuo disponibile');return}
-  const ok=confirm('ATTENZIONE: stai per autorizzare un rimborso REALE su Stripe.\\nPagamento: '+t.id+'\\nProdotto: '+t.description+'\\nImporto: '+euro(cents)+'\\n\\nConfermi?');
+  const ok=confirm('ATTENZIONE: stai per autorizzare un rimborso REALE su Stripe.\nPagamento: '+t.id+'\nProdotto: '+t.description+'\nImporto: '+euro(cents)+'\n\nConfermi?');
   if(!ok)return;
   const phrase=prompt('Ultima conferma: scrivi esattamente CONFERMO RIMBORSO');
   if(phrase!=='CONFERMO RIMBORSO')return;
