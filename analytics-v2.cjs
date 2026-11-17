@@ -79,7 +79,7 @@ async function compile(period){
    daily.set(day,(daily.get(day)||0)+(c.amount_captured||c.amount||0));
    monthly.set(month,(monthly.get(month)||0)+(c.amount_captured||c.amount||0));
  }
- const transactions=eur.map(c=>({date:dayKey(c.created),description:titleFor(c),group:groupFor(c),amount:c.amount_captured||c.amount||0,refund:c.amount_refunded||0,fee:fees===null?null:null})).sort((a,b)=>b.date.localeCompare(a.date));
+ const transactions=eur.map(c=>({id:c.id,date:dayKey(c.created),description:titleFor(c),group:groupFor(c),amount:c.amount_captured||c.amount||0,refund:c.amount_refunded||0,fee:fees===null?null:null})).sort((a,b)=>b.date.localeCompare(a.date));
  return {
    connected:true,mode:stripeKey.includes('_test_')?'test':'live',period,partial:charges.partial,
    count:eur.length,gross:eur.reduce((n,c)=>n+(c.amount_captured||c.amount||0),0),
@@ -136,7 +136,7 @@ function frontend(){
   metric('Dopo rimborsi e commissioni',data.fees===null||data.feePartial?'N/D':euro(data.gross-data.refunds-data.fees),'Non è utile fiscale né importo liquidato');
   metric('Abbonamenti attivi',data.subscriptions===null?'N/D':String(data.subscriptions),data.subsPartial?'Conteggio incompleto':'Stato attuale, non storico');
   for(const p of data.byProduct){const row=document.createElement('tr');cell(p.name,row);cell(p.count,row);cell(euro(p.gross),row);cell(euro(p.gross-p.refunds),row);el('products').append(row)}
-  for(const t of data.transactions.slice(0,250)){const row=document.createElement('tr');cell(t.date,row);cell(t.group,row);cell(t.description,row);cell(euro(t.amount),row);cell(euro(t.refund),row);el('rows').append(row)}
+  for(const t of data.transactions.slice(0,250)){const row=document.createElement('tr');cell(t.date,row);cell(t.group,row);cell(t.description,row);cell(euro(t.amount),row);cell(euro(t.refund),row);el('rows').append(row)}\n  renderRefunds();
   if(!data.byProduct.length)cell('Nessun prodotto nel periodo.',el('products'),'tr');
   el('export').disabled=false;
   showChart();
@@ -151,6 +151,14 @@ function frontend(){
   }catch(e){el('message').textContent='Errore nella consultazione: '+e.message}
   finally{el('period').disabled=false}
  }
+ function renderRefunds(){
+  const body=el('refundRows');if(!body)return;body.replaceChildren();
+  const q=el('refundSearch').value.trim().toLowerCase();
+  const rows=(state.data?.transactions||[]).filter(t=>!q||[t.id,t.description,t.group,t.date].some(v=>String(v).toLowerCase().includes(q))).slice(0,100);
+  for(const t of rows){const tr=document.createElement('tr');cell(t.date,tr);cell(t.description,tr);cell(euro(t.amount),tr);cell(euro(t.refund),tr);const td=document.createElement('td');const left=Math.max(0,t.amount-t.refund);const a=document.createElement('a');a.href='https://dashboard.stripe.com/'+(state.data.mode==='test'?'test/':'')+'payments/'+encodeURIComponent(t.id);a.target='_blank';a.rel='noopener noreferrer';a.textContent=left>0?'Apri in Stripe':'Già rimborsato';if(!left){a.style.opacity='.7'}td.append(a);tr.append(td);body.append(tr)}
+  if(!rows.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=5;td.textContent='Nessuna transazione trovata nel periodo selezionato.';tr.append(td);body.append(tr)}
+ }
+ el('refundSearch').addEventListener('input',renderRefunds);
  function exportCsv(){
   if(!state.data?.connected)return;
   const rows=[['Data','Categoria','Descrizione','Lordo EUR','Rimborsi EUR'],...state.data.transactions.map(x=>[x.date,x.group,x.description,(x.amount/100).toFixed(2).replace('.',','),(x.refund/100).toFixed(2).replace('.',',')])];
@@ -173,7 +181,7 @@ function dashboard(res,page){
   '<p id="message" role="status">Caricamento…</p><div class="box"><h2>Indicatori economici</h2><div id="metrics" class="metrics"></div></div>'+
   '<div class="box"><div class="dash-head"><h2>Andamento dei pagamenti lordi</h2><select id="chartMode" aria-label="Vista grafico"><option value="monthly">Mensile</option><option value="daily">Giornaliero (fino a 30 giorni)</option></select></div><div id="bars"></div></div>'+
   '<div class="box"><h2>Vendite per applicazione</h2><p>Le transazioni senza nome prodotto verificabile sono indicate come non attribuite. REVERSE 3D verrà riconosciuto quando il suo checkout includerà il nome del prodotto.</p><div class="scroll"><table><thead><tr><th>Applicazione</th><th>Vendite</th><th>Lordo</th><th>Dopo rimborsi</th></tr></thead><tbody id="products"></tbody></table></div></div>'+
-  '<div class="box"><h2>Dettaglio ultime transazioni</h2><div class="scroll"><table><thead><tr><th>Data</th><th>Categoria</th><th>Descrizione</th><th>Lordo</th><th>Rimborsi</th></tr></thead><tbody id="rows"></tbody></table></div></div>'+
+  '<div class="box" id="refunds"><h2>Rimborsi · autorizzazione manuale</h2><p>Solo il titolare autorizza i rimborsi. Cerca il pagamento, aprilo nella Dashboard Stripe, controlla i dettagli e conferma il rimborso totale o parziale direttamente su Stripe. Questa pagina NON invia ordini di rimborso.</p><div class="tools"><label for="refundSearch">Cerca transazione</label><input id="refundSearch" type="search" placeholder="Prodotto, data o ID Stripe" style="background:#102d49;color:white;border:1px solid #3c7899;border-radius:7px;padding:10px;min-width:240px"/><a href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener noreferrer">Tutti i pagamenti Stripe</a></div><div class="scroll"><table><thead><tr><th>Data</th><th>Prodotto</th><th>Pagato</th><th>Già rimborsato</th><th>Gestione</th></tr></thead><tbody id="refundRows"></tbody></table></div><p>Dopo un rimborso totale che termina la licenza, controlla la disattivazione dei nuovi download. Il blocco automatico non è ancora verificato. Per la nota di credito segui gli obblighi fiscali applicabili.</p></div>'+\n  '<div class="box"><h2>Dettaglio ultime transazioni</h2><div class="scroll"><table><thead><tr><th>Data</th><th>Categoria</th><th>Descrizione</th><th>Lordo</th><th>Rimborsi</th></tr></thead><tbody id="rows"></tbody></table></div></div>'+
   '<p>Importi in euro, senza conversioni valutarie. I rimborsi sono associati al pagamento iniziale, non alla data effettiva del rimborso. Le commissioni potrebbero non includere costi extra fatturati separatamente da Stripe: per la riconciliazione contabile fa fede la reportistica Stripe.</p>';
  page(res,body,'('+frontend.toString()+')()');
 }
