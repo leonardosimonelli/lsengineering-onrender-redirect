@@ -140,6 +140,31 @@ async function route(req,res,next){
    let result;try{result=await remote.json()}catch{return json(res,502,{error:'Verifica remota non disponibile'})}
    return json(res,remote.status,result);
   }
+
+  if(p==='/_ls/refund'&&req.method==='POST'){
+   if(req.headers.origin!==origin||!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,403,{error:'Origine non autorizzata'});
+   if(!await verify(cookie(req)))return json(res,401,{error:'Accesso scaduto'});
+   const key=process.env.STRIPE_REFUND_SECRET_KEY||'';
+   if(!/^sk_(live|test)_/.test(key))return json(res,503,{error:'Rimborsi diretti non configurati: aggiungere la chiave Stripe riservata su Render'});
+   let raw='',size=0;for await(const chunk of req){size+=chunk.length;if(size>1000)return json(res,413,{error:'Dati troppo lunghi'});raw+=chunk}
+   let data;try{data=JSON.parse(raw)}catch{return json(res,400,{error:'Richiesta non valida'})}
+   const chargeId=data?.charge_id,amount=data?.amount_cents,confirmation=data?.confirmation;
+   if(typeof chargeId!=='string'||!/^ch_[a-zA-Z0-9]{10,80}$/.test(chargeId)||!Number.isSafeInteger(amount)||amount<1||amount>100000000||confirmation!=='CONFERMO RIMBORSO')return json(res,400,{error:'Conferma o importo non valido'});
+   const auth={authorization:'Bearer '+key};
+   const read=await fetch('https://api.stripe.com/v1/charges/'+encodeURIComponent(chargeId),{headers:auth,signal:AbortSignal.timeout(12000)});
+   if(!read.ok)return json(res,502,{error:'Impossibile verificare il pagamento Stripe'});
+   const charge=await read.json();
+   if(!charge.paid||charge.status!=='succeeded'||charge.disputed||!charge.payment_intent||charge.currency!=='eur'||charge.livemode!==key.startsWith('sk_live_'))return json(res,409,{error:'Pagamento non rimborsabile o ambiente non corrispondente'});
+   const remaining=(charge.amount_captured||charge.amount||0)-(charge.amount_refunded||0);
+   if(amount>remaining||remaining<=0)return json(res,409,{error:'Importo superiore al residuo rimborsabile. Aggiorna la pagina.'});
+   const params=new URLSearchParams({payment_intent:charge.payment_intent,amount:String(amount),reason:'requested_by_customer'});
+   const idempotency=crypto.createHash('sha256').update(chargeId+':'+amount+':'+(charge.amount_refunded||0)).digest('hex');
+   const result=await fetch('https://api.stripe.com/v1/refunds',{method:'POST',headers:{...auth,'content-type':'application/x-www-form-urlencoded','idempotency-key':'lsadmin-refund-'+idempotency},body:params,signal:AbortSignal.timeout(20000)});
+   const refund=await result.json();
+   if(!result.ok){console.error('LS refund Stripe rejection',result.status,chargeId);return json(res,502,{error:refund?.error?.message||'Stripe ha rifiutato il rimborso'})}
+   console.log('LS admin refund authorized',JSON.stringify({charge_id:chargeId,refund_id:refund.id,amount,mode:charge.livemode?'live':'test',status:refund.status}));
+   return json(res,200,{ok:true,refund_id:refund.id,status:refund.status,amount:refund.amount});
+  }
   if(p==='/_ls/stats'&&req.method==='GET'){if(!await verify(cookie(req)))return json(res,401,{error:'Unauthorized'});try{return json(res,200,await analyticsV2.stats(u.searchParams.get('period')||'d30'))}catch{return json(res,502,{error:'Stripe unavailable: verify read-only permissions'})}}
   return json(res,404,{error:'Not found'});
  }catch{return json(res,503,{error:'Temporary auth error'})}
