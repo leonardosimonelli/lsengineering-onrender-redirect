@@ -108,6 +108,18 @@ async function route(req,res,next){
     return res.end('<!doctype html><html lang="it"><title>LS M30</title><body><h1>LS Engineering M30 public handler attivo</h1></body></html>');
   }
   if(p.startsWith('/_ls/m30/public/'))return storefrontM30(req,res,p);
+  if(p==='/_ls/releases'&&req.method==='GET'){
+   if(!await verify(cookie(req)))return json(res,401,{error:'Accesso richiesto'});
+   const body='<h1>LS Engineering · Nuove versioni</h1><p>Caricamento protetto in area di preparazione. Nessun file pubblicato viene sostituito.</p><div class="box"><label>Software <select id="product"><option value="m13">REVERSE 2D M13</option><option value="aerowing">LS AEROWING</option></select></label><p><label>Versione (es. v2.0) <input id="version" value="v2.0" maxlength="36"></label></p><p><input id="file" type="file"></p><button id="upload">Carica e verifica SHA-256</button><p id="status" role="status"></p></div><a href="/_ls/admin">Torna alla dashboard</a>';
+   const script=`const el=id=>document.getElementById(id);el('upload').onclick=async()=>{const file=el('file').files[0],status=el('status');if(!file){status.textContent='Seleziona un file';return}if(file.size>30*1024*1024){status.textContent='Limite 30 MB per file: suddividere il pacchetto';return}el('upload').disabled=true;try{status.textContent='Calcolo impronta SHA-256…';const buffer=await file.arrayBuffer(),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)),x=>x.toString(16).padStart(2,'0')).join('');const payload={product:el('product').value,version:el('version').value,filename:file.name,sha256:hash,size:file.size};const call=async action=>{const r=await fetch('/_ls/releases/api',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...payload,action})});const j=await r.json();if(!r.ok)throw Error(j.error||'Errore server');return j};const signed=await call('sign');status.textContent='Caricamento privato in corso…';const upload=await fetch(signed.signedUrl,{method:'PUT',headers:{'content-type':'application/octet-stream'},body:file});if(!upload.ok)throw Error('Caricamento non riuscito ('+upload.status+')');status.textContent='Verifica integrità sul server…';const verified=await call('verify');if(!verified.verified)throw Error('SHA-256 non corrispondente');status.textContent='Verificato: '+file.name+' · SHA-256 '+hash+' · IN PREPARAZIONE, NON PUBBLICATO';}catch(e){status.textContent='Operazione non completata: '+e.message}finally{el('upload').disabled=false}}`;
+   return page(res,body,script);
+  }
+  if(p==='/_ls/releases/api'&&req.method==='POST'){
+   if(req.headers.origin!==origin||!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,403,{error:'Origine non autorizzata'});
+   if(!await verify(cookie(req)))return json(res,401,{error:'Sessione scaduta'});
+   let raw='',n=0;for await(const c of req){n+=c.length;if(n>1500)return json(res,413,{error:'Richiesta troppo grande'});raw+=c}
+   try{const upstream=await fetch('https://ijdjyketecwwplvqcqpd.supabase.co/functions/v1/ls-release-staging',{method:'POST',headers:{authorization:'Bearer '+cookie(req),'content-type':'application/json'},body:raw,signal:AbortSignal.timeout(45000)});const body=await upstream.text();if(body.length>5000)return json(res,502,{error:'Risposta non valida'});return json(res,upstream.status,JSON.parse(body))}catch{return json(res,502,{error:'Servizio di preparazione non disponibile'})}
+  }
   if(p==='/_ls/admin'&&req.method==='GET')return await verify(cookie(req))?analyticsV2.dashboard(res,page):login(res);
   if(p==='/_ls/login'&&req.method==='POST'){
    if(req.headers.origin!==origin||!req.headers['content-type']?.startsWith('application/json'))return json(res,403,{error:'Forbidden'});
