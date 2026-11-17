@@ -165,6 +165,18 @@ async function route(req,res,next){
    console.log('LS admin refund authorized',JSON.stringify({charge_id:chargeId,refund_id:refund.id,amount,mode:charge.livemode?'live':'test',status:refund.status}));
    return json(res,200,{ok:true,refund_id:refund.id,status:refund.status,amount:refund.amount});
   }
+  if(p==='/_ls/subscriptions'&&req.method==='GET'){
+   if(!await verify(cookie(req)))return json(res,401,{error:'Accesso non autorizzato'});
+   if(!stripeKey)return json(res,503,{error:'Chiave Stripe di lettura non configurata'});
+   try{
+    const url='https://api.stripe.com/v1/subscriptions?limit=100&status=all';
+    const upstream=await fetch(url,{headers:{authorization:'Bearer '+stripeKey},signal:AbortSignal.timeout(12000)});
+    if(!upstream.ok)return json(res,502,{error:'Stripe non consente la consultazione degli abbonamenti'});
+    const data=await upstream.json();
+    const rows=(data.data||[]).map(x=>({id:x.id,status:x.status,customer:x.customer,product:x.items?.data?.[0]?.price?.product||null,amount:x.items?.data?.[0]?.price?.unit_amount??null,currency:x.currency||x.items?.data?.[0]?.price?.currency||null,period_end:x.current_period_end||x.items?.data?.[0]?.current_period_end||null,cancel_at_period_end:!!x.cancel_at_period_end})); 
+    return json(res,200,{mode:stripeKey.includes('_test_')?'test':'live',partial:!!data.has_more,rows});
+   }catch{return json(res,502,{error:'Impossibile consultare gli abbonamenti'})}
+  }
   if(p==='/_ls/stats'&&req.method==='GET'){if(!await verify(cookie(req)))return json(res,401,{error:'Unauthorized'});try{return json(res,200,await analyticsV2.stats(u.searchParams.get('period')||'d30'))}catch{return json(res,502,{error:'Stripe unavailable: verify read-only permissions'})}}
   return json(res,404,{error:'Not found'});
  }catch{return json(res,503,{error:'Temporary auth error'})}
