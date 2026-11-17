@@ -14,7 +14,7 @@ LS Engineering develops practical applications for mechanical engineering and pr
 
 - [REVERSE M13 2D](https://lsengineering-web.onrender.com/software/reverse-m13-2d.html): planar mechanism-synthesis exploration from a drawn target path or CSV data (€19.99 one-time).
 - [REVERSE Mechanism Suite 3D M30.18](https://lsengineering-web.onrender.com/software/reverse-3d.html): spatial-mechanism exploration, **early release; Windows executable not yet functionally tested** (€29.99 one-time).
-- [LS AEROWING Design V1.0 Beta](https://lsengineering-web.onrender.com/software/ls-aerowing.html): preliminary wing aerodynamic and structural design workflow; beta software, independent engineering verification required (€59, check current purchasing availability).
+- [LS AEROWING Design V1.0 Beta](https://lsengineering-web.onrender.com/software/ls-aerowing-design.html): preliminary wing aerodynamic and structural design workflow; beta software, independent engineering verification required (€59, check current purchasing availability).
 - [Scadenze Studio](https://lsengineering-web.onrender.com/software/scadenze-studio.html): web app for deadlines, files and assigned professionals; 7-day trial, then €1.99/month plus VAT, with some email features still being tested.
 - [Conferma Appuntamenti](https://lsengineering-web.onrender.com/software/conferma-appuntamenti.html): appointment-confirmation project, not yet for sale.
 
