@@ -142,4 +142,14 @@ function render(lang){
   document.title=seoTitles[lang]||seoTitles.it;
 }
 const select=document.getElementById('language');
-if(select){let lang='it';try{lang=localStorage.getItem('ls_language')||'it';}catch{}if(!C[lang])lang='it';select.value=lang;select.addEventListener('change',()=>render(select.value));render(lang);}
+if(select){
+  const pathLang=location.pathname.match(/^\/(it|en|fr|de|es|ru|zh|ar)(?:\/|$)/)?.[1];
+  let saved='';try{saved=localStorage.getItem('ls_language')||'';}catch{}
+  const preferred=(navigator.languages&&navigator.languages[0])||navigator.language||'it';
+  const detected=preferred.toLowerCase().split('-')[0];
+  let lang=pathLang||((saved&&C[saved])?saved:((C[detected]&&detected)||'en'));
+  if(!C[lang])lang='it';
+  select.value=lang;
+  select.addEventListener('change',()=>render(select.value));
+  render(lang);
+}
