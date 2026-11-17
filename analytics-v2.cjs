@@ -16,8 +16,12 @@ function groupFor(charge){
  const s=[m.product_name,m.product,m.app,m.product_title,m.item,charge.description].filter(Boolean).join(' ').toLowerCase();
  if(/reverse.{0,50}3d|3d.{0,40}reverse|mechanism.{0,25}3d/.test(s))return 'REVERSE Mechanism Suite 3D';
  if(/reverse|m13|cinematism|mechanism/.test(s))return 'REVERSE Mechanism Suite 2D';
+ if(/aerowing|aero.wing|aero wing/.test(s))return 'LS AEROWING';
+ if(/inventorium/.test(s))return 'INVENTORIUM AUTONOMOUS';
+ if(/spring.engineering|ls.spring|molle/.test(s))return 'LS SPRING ENGINEERING';
+ if(/fatigue|nrg.fatigue/.test(s))return 'NRG FATIGUE';
  if(/scadenz|deadline/.test(s))return 'Scadenze Studio';
- if(/appuntament|appointment/.test(s))return 'Conferma Appuntamenti';
+ if(/appuntament|appointment/.test(s))return 'Gestione Appuntamenti';
  return 'Non attribuita';
 }
 async function api(path,params){
